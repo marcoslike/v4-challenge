@@ -1,6 +1,182 @@
 openapi: 3.0.1
 info:
-  title: DotNet Challenge 20200902
-  description: CRUD Products
-  version: '0.1'
+  title: API Fitness Foods
+  description: API para gerenciamento de produtos do Open Food Facts
+  version: '1.0.0'
+servers:
+  - url: http://localhost:3000
+    description: Servidor local de desenvolvimento
 
+tags:
+  - name: Products
+    description: Operações relacionadas aos produtos
+
+components:
+  schemas:
+    Product:
+      type: object
+      required:
+        - code
+        - name
+      properties:
+        code:
+          type: string
+          description: Código único do produto
+        name:
+          type: string
+          description: Nome do produto
+        brands:
+          type: string
+          description: Marca do produto
+        categories:
+          type: array
+          items:
+            type: string
+          description: Categorias do produto
+        labels:
+          type: array
+          items:
+            type: string
+          description: Rótulos do produto
+        quantity:
+          type: string
+          description: Quantidade do produto
+        ingredients_text:
+          type: string
+          description: Texto dos ingredientes do produto
+        nutriments:
+          type: object
+          properties:
+            energy_kcal:
+              type: number
+            fat:
+              type: number
+            sugars:
+              type: number
+            proteins:
+              type: number
+            salt:
+              type: number
+          description: Informações nutricionais do produto
+        countries:
+          type: array
+          items:
+            type: string
+          description: Países de venda
+        image_url:
+          type: string
+          description: URL da imagem do produto
+        imported_t:
+          type: string
+          format: date-time
+          description: Data de importação
+        status:
+          type: string
+          enum: [draft, trash, published]
+          description: Status do produto
+
+paths:
+  /products:
+    get:
+      tags:
+        - Products
+      summary: Retorna a lista de produtos
+      responses:
+        200:
+          description: Lista de produtos
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Product'
+
+    post:
+      tags:
+        - Products
+      summary: Cria um novo produto
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Product'
+      responses:
+        201:
+          description: Produto criado com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+        500:
+          description: Erro ao criar o produto
+
+  /products/{code}:
+    get:
+      tags:
+        - Products
+      summary: Retorna um produto específico pelo código
+      parameters:
+        - in: path
+          name: code
+          schema:
+            type: string
+          required: true
+          description: O código do produto
+      responses:
+        200:
+          description: Produto encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+        404:
+          description: Produto não encontrado
+
+    put:
+      tags:
+        - Products
+      summary: Atualiza um produto pelo código
+      parameters:
+        - in: path
+          name: code
+          schema:
+            type: string
+          required: true
+          description: O código do produto a ser atualizado
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Product'
+      responses:
+        200:
+          description: Produto atualizado com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+        404:
+          description: Produto não encontrado
+
+    delete:
+      tags:
+        - Products
+      summary: Marca um produto como trash pelo código
+      parameters:
+        - in: path
+          name: code
+          schema:
+            type: string
+          required: true
+          description: O código do produto a ser marcado como trash
+      responses:
+        200:
+          description: Produto marcado como trash
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+        404:
+          description: Produto não encontrado

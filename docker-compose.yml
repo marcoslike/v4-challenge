@@ -1,0 +1,42 @@
+version: '3.8'
+services:
+  app:
+    build: .
+    ports:
+      - '3000:3000'
+    environment:
+      - MONGO_URI=mongodb://mongo:27017/fitness-foods
+      - ELASTICSEARCH_HOST=http://elasticsearch:9200
+    depends_on:
+      - mongo
+      - elasticsearch
+    links:
+      - mongo
+      - elasticsearch
+
+  mongo:
+    image: mongo:latest
+    container_name: mongo_db_container
+    ports:
+      - '27017:27017'
+    volumes:
+      - ./data/db:/data/db  # Persistência de dados
+
+  mongo-express:
+    image: mongo-express
+    container_name: mongo_express
+    restart: always
+    ports:
+      - '8081:8081'
+    environment:
+      ME_CONFIG_MONGODB_SERVER: mongo
+      ME_CONFIG_MONGODB_URL: mongodb://mongo:27017/
+      ME_CONFIG_BASICAUTH_USERNAME: admin # Se quiser, pode configurar autenticação
+      ME_CONFIG_BASICAUTH_PASSWORD: admin123
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.10.1
+    environment:
+      - discovery.type=single-node
+    ports:
+      - '9200:9200'

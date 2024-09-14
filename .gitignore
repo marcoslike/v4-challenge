@@ -1,0 +1,20 @@
+
+# Node modules
+node_modules/
+
+# Logs
+logs
+*.log
+npm-debug.log*
+
+# Compilados do TypeScript
+coverage/
+build/
+dist/
+tmp/
+data/
+# Credenciais
+.env
+
+# Arquivos do sistema
+.DS_Store
